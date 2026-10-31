@@ -16,14 +16,20 @@
             <p class="sys-msg">> 正在加载工作室主页...</p>
             <p class="sys-msg">> 状态: 处于早期开发阶段 (Early Access)</p>
             <br>
-            <p>我们是一群沉迷物理和代码的独立开发者。</p>
+            <p>我们是物理和代码的独立开发者。</p>
             <p>目前正在锐意制作我们的第一款叙事解谜游戏：<strong>《半影》 (Antumbra)</strong>。</p>
-            <p>游戏核心玩法：在完全无光的环境下，通过计算声波的干涉条纹来重构周围的物理实体。</p>
+            <p>游戏核心玩法：在常规感觉器官近乎失灵的环境下，通过其他感觉和记忆来重构周围的物理实体。</p>
             <br>
             <p class="devlog">> [最新开发日志]</p>
-            <p class="log-item">- 10/28: 重构了后端的物理引擎。修了几个因为“光速超频”导致的穿模Bug。</p>
-            <p class="log-item">- 10/29: 引擎重构中，预计下个版本加入“逆光”模式。附：那个后门我留着了，老地方。</p>
-            <p class="log-item">- 10/30: 工作室成员过生日，断更一天。</p>
+            <p class="log-item">- 25/01/02: 制定了基本叙事框架。</p>
+            <p class="log-item">- 25/05/19: 完善了故事设定和交互逻辑。</p>
+            <p class="log-item">- 25/08/10: 完成了第一个框架原型。</p>
+            <p class="log-item">- 25/10/24: 通过一些交流完成了未来一些可行性的初步验证。</p>
+            <p class="log-item">- 26/01/04: 近期遇到困难，下个月补上进度。</p>
+            <p class="log-item">- 26/05/17: 重构游戏框架。</p>
+            <p class="log-item">- 26/07/21: 遇到困难，断更一个月。</p>
+            <p class="log-item">- 26/09/05: 加入更多设定和行为逻辑。</p>
+            <p class="log-item">- 26/10/30: 遇到困难，断更一个月。</p>
         </div>
 
         <div class="footer">
@@ -34,18 +40,17 @@
     <!-- 隐藏的终端输入区，默认不可见 -->
     <div id="hidden-terminal" class="hidden">
         <p>> ACCESSING TACHYON PROTOCOL...</p>
-        <p>> 提示：输入认知视觉的等级以解锁。 (Hint: Level 1)</p>
+        <p>> 提示：杈撳叆璁ょ煡瑙嗚鐨勭瓑绾т互瑙ｉ攣銆</p>
         <input type="text" id="command-input" autocomplete="off" placeholder="输入指令...">
         <div id="output"></div>
     </div>
 
     <script>
-        // 监听键盘按键，按下特定组合（比如 Shift + A）激活隐藏后门
+        // 监听键盘按键，按下（Shift + A）激活隐藏后门
         let keysPressed = {};
         document.addEventListener('keydown', (e) => {
             keysPressed[e.key.toLowerCase()] = true;
-            // 比如按 Shift + A + N (Antumbra)
-            if (keysPressed['shift'] && keysPressed['a'] && keysPressed['n']) {
+            if (keysPressed['shift'] && keysPressed['a']) {
                 document.querySelector('.terminal').style.display = 'none';
                 document.getElementById('hidden-terminal').classList.remove('hidden');
                 document.getElementById('command-input').focus();
@@ -66,7 +71,7 @@
                 input.value = '';
                 
                 if (command === '1' || command === 'level 1') {
-                    output.innerHTML += `<p class="success">> 验证通过。欢迎回来，观测者。现实坐标锚点已发送。</p>`;
+                    output.innerHTML += `<p class="success">> 验证通过。欢迎回来。</p>`;
                 } else {
                     output.innerHTML += `<p class="error">> 指令错误。未知权限。</p>`;
                 }
