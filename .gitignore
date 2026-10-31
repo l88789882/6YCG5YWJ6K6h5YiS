@@ -1,0 +1,29 @@
+# ==========================================
+# Antumbra - 基础忽略规则
+# ==========================================
+
+# 操作系统及编辑器缓存
+.DS_Store
+Thumbs.db
+.vscode/
+.idea/
+
+# 依赖包
+node_modules/
+dist/
+
+# ==========================================
+# [警告] 以下内容严禁上传至公开仓库
+# ==========================================
+
+#璁ょ煡瑙嗚绛夌骇娴嬭瘯鏁版嵁
+/data/cognitive_vision_*.json
+
+# 蹇瓙锛圱achyon锛夐€嗗悜鎺ㄥ绠楁硶鏍稿績浠ｇ爜
+/core/tachyon_algorithm.py
+
+# 鐜板疄鍧愭爣閿氱偣娓叉煋鏃ュ織
+/logs/real_world_coordinates.txt
+
+# 旧版“死者迷宫”测试包（已废弃）
+/builds/deceaseds_pitchy_labyrinth_v0.1.zip
