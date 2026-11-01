@@ -1,0 +1,189 @@
+/* 星空背景（body::before） */
+
+html {
+    background: #03040b;
+}
+
+body {
+    background: transparent;
+}
+
+/* 每组星星的可动画亮度 */
+@property --s1 { syntax: "<number>"; inherits: false; initial-value: .85; }
+@property --s2 { syntax: "<number>"; inherits: false; initial-value: .70; }
+@property --s3 { syntax: "<number>"; inherits: false; initial-value: 1;   }
+@property --s4 { syntax: "<number>"; inherits: false; initial-value: .60; }
+@property --s5 { syntax: "<number>"; inherits: false; initial-value: .90; }
+
+/* 每团光晕的可动画位置 */
+@property --g1x { syntax: "<percentage>"; inherits: false; initial-value: 22%; }
+@property --g1y { syntax: "<percentage>"; inherits: false; initial-value: 30%; }
+@property --g2x { syntax: "<percentage>"; inherits: false; initial-value: 76%; }
+@property --g2y { syntax: "<percentage>"; inherits: false; initial-value: 24%; }
+@property --g3x { syntax: "<percentage>"; inherits: false; initial-value: 58%; }
+@property --g3y { syntax: "<percentage>"; inherits: false; initial-value: 82%; }
+
+body::before {
+    content: "";
+    position: fixed;
+    inset: 0;
+    z-index: -1;
+    pointer-events: none;
+
+    background-color: #03040b;
+    background-image:
+        /* 极模糊的深紫 / 深灰光晕 */
+        radial-gradient(58% 52% at var(--g1x, 22%) var(--g1y, 30%), rgba(88, 40, 138, .22), transparent 72%),
+        radial-gradient(52% 46% at var(--g2x, 76%) var(--g2y, 24%), rgba(96, 98, 112, .10), transparent 70%),
+        radial-gradient(64% 58% at var(--g3x, 58%) var(--g3y, 82%), rgba(52, 24, 92, .24), transparent 74%),
+
+        /* 亮星：带大光晕，最慢的一组闪烁 */
+        radial-gradient(circle at 47% 29%, rgba(255, 255, 255, var(--s5, .90)) 0 1.4px, transparent 5px),
+
+        /* 白色细星：五层不同密度 */
+        radial-gradient(circle at 23% 67%, rgba(255, 255, 255, var(--s1, .85)) 0 .8px, transparent 2px),
+        radial-gradient(circle at 71% 19%, rgba(255, 255, 255, var(--s2, .70)) 0 .6px, transparent 1.8px),
+        radial-gradient(circle at 43% 88%, rgba(255, 255, 255, var(--s3, 1)) 0 1px, transparent 2.4px),
+        radial-gradient(circle at 13% 41%, rgba(255, 255, 255, var(--s4, .60)) 0 .5px, transparent 1.6px),
+        radial-gradient(circle at 57% 33%, rgba(255, 255, 255, var(--s5, .90)) 0 1.2px, transparent 2.8px),
+
+        /* 偏蓝 / 偏暖的星，增加层次 */
+        radial-gradient(circle at 67% 53%, rgba(190, 212, 255, var(--s1, .85)) 0 .9px, transparent 2.1px),
+        radial-gradient(circle at 31% 73%, rgba(255, 226, 186, var(--s2, .70)) 0 .7px, transparent 1.9px),
+
+        /* 一条很淡的银河带 */
+        linear-gradient(112deg, transparent 24%, rgba(122, 134, 181, .05) 40%, rgba(150, 160, 205, .10) 50%, rgba(122, 134, 181, .05) 60%, transparent 78%),
+
+        /* 最底层的深海蓝 */
+        radial-gradient(80% 60% at 50% 40%, #0a1022 0%, #05060f 62%, #03040b 100%);
+
+    background-size:
+        100% 100%,
+        100% 100%,
+        100% 100%,
+        359px 383px,
+        109px 127px,
+        149px 167px,
+        191px 211px,
+        83px 97px,
+        263px 281px,
+        197px 223px,
+        157px 139px,
+        100% 100%,
+        100% 100%;
+
+    background-repeat:
+        no-repeat,
+        no-repeat,
+        no-repeat,
+        repeat,
+        repeat,
+        repeat,
+        repeat,
+        repeat,
+        repeat,
+        repeat,
+        repeat,
+        no-repeat,
+        no-repeat;
+
+    /* 错开每层平铺的相位，避免左右/上下边缘出现整列缺星 */
+    background-position:
+        0 0,
+        0 0,
+        0 0,
+        -37px -61px,
+        -67px -23px,
+        -13px -71px,
+        -53px -17px,
+        -29px -43px,
+        -83px -31px,
+        -47px -53px,
+        -71px -37px,
+        0 0,
+        0 0;
+
+    animation:
+        twinkle1 7.3s ease-in-out -1.2s infinite,
+        twinkle2 9.7s ease-in-out -3.1s infinite,
+        twinkle3 12.9s ease-in-out -5.3s infinite,
+        twinkle4 17.3s ease-in-out -7.9s infinite,
+        twinkle5 23.9s ease-in-out -11.7s infinite,
+        drift1 140s ease-in-out infinite alternate,
+        drift2 180s ease-in-out infinite alternate,
+        drift3 220s ease-in-out infinite alternate;
+}
+
+@keyframes twinkle1 {
+    0%, 100% { --s1: .90; }
+    8%       { --s1: .25; }
+    21%      { --s1: 1; }
+    36%      { --s1: .40; }
+    54%      { --s1: .85; }
+    69%      { --s1: .15; }
+    84%      { --s1: .95; }
+}
+
+@keyframes twinkle2 {
+    0%, 100% { --s2: .70; }
+    12%      { --s2: .15; }
+    27%      { --s2: .90; }
+    43%      { --s2: .30; }
+    58%      { --s2: .75; }
+    76%      { --s2: .20; }
+    91%      { --s2: .85; }
+}
+
+@keyframes twinkle3 {
+    0%, 100% { --s3: 1; }
+    6%       { --s3: .35; }
+    24%      { --s3: .90; }
+    38%      { --s3: .20; }
+    55%      { --s3: 1; }
+    68%      { --s3: .45; }
+    86%      { --s3: .85; }
+}
+
+@keyframes twinkle4 {
+    0%, 100% { --s4: .55; }
+    14%      { --s4: .10; }
+    29%      { --s4: .70; }
+    47%      { --s4: .25; }
+    63%      { --s4: .60; }
+    79%      { --s4: .15; }
+    93%      { --s4: .65; }
+}
+
+@keyframes twinkle5 {
+    0%, 100% { --s5: .80; }
+    10%      { --s5: .20; }
+    22%      { --s5: 1; }
+    40%      { --s5: .35; }
+    52%      { --s5: .90; }
+    71%      { --s5: .10; }
+    88%      { --s5: .75; }
+}
+
+@keyframes drift1 {
+    0%   { --g1x: 16%; --g1y: 24%; }
+    50%  { --g1x: 30%; --g1y: 38%; }
+    100% { --g1x: 22%; --g1y: 30%; }
+}
+
+@keyframes drift2 {
+    0%   { --g2x: 82%; --g2y: 18%; }
+    50%  { --g2x: 70%; --g2y: 32%; }
+    100% { --g2x: 76%; --g2y: 24%; }
+}
+
+@keyframes drift3 {
+    0%   { --g3x: 52%; --g3y: 76%; }
+    50%  { --g3x: 66%; --g3y: 88%; }
+    100% { --g3x: 58%; --g3y: 82%; }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    body::before {
+        animation: none;
+    }
+}

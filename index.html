@@ -3,21 +3,24 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Antumbra Interactive</title>
+    <title>Antumbra</title>
     <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="backdrop.css">
 </head>
 <body>
     <div class="terminal">
         <div class="header">
-            <span>ANTUMBRA INTERACTIVE // 独立游戏研发中</span>
+            <span>ANTUMBRA // 独立游戏研发中</span>
         </div>
-        
+
         <div class="content">
+            <a class="corner-link tr" href="https://lab.quantumflytrap.com" target="_blank" rel="noopener">打发时间</a>
+
             <p class="sys-msg">> 正在加载工作室主页...</p>
             <p class="sys-msg">> 状态: 处于早期开发阶段 (Early Access)</p>
             <br>
             <p>我们是物理和代码的独立开发者。</p>
-            <p>目前正在锐意制作我们的第一款叙事解谜游戏：<strong>《半影》 (Antumbra)</strong>。</p>
+            <p>目前正在制作我们的第一款叙事解谜游戏：<strong>《半影》 (Antumbra)</strong>。</p>
             <p>游戏核心玩法：在常规感觉器官近乎失灵的环境下，通过其他感觉和记忆来重构周围的物理实体。</p>
             <br>
             <p class="devlog">> [最新开发日志]</p>
@@ -30,6 +33,8 @@
             <p class="log-item">- 26/07/21: 遇到困难，断更一个月。</p>
             <p class="log-item">- 26/09/05: 加入更多设定和行为逻辑。</p>
             <p class="log-item">- 26/10/30: 遇到困难，断更一个月。</p>
+
+            <a class="corner-link bl" href="https://space.bilibili.com/287457026" target="_blank" rel="noopener">联系我们</a>
         </div>
 
         <div class="footer">
@@ -37,46 +42,208 @@
         </div>
     </div>
 
-    <!-- 隐藏的终端输入区，默认不可见 -->
-    <div id="hidden-terminal" class="hidden">
-        <p>> ACCESSING TACHYON PROTOCOL...</p>
-        <p>> 提示：杈撳叆璁ょ煡瑙嗚鐨勭瓑绾т互瑙ｉ攣銆</p>
-        <input type="text" id="command-input" autocomplete="off" placeholder="输入指令...">
-        <div id="output"></div>
-    </div>
+    <!-- 背景音乐 -->
+    <audio id="bgm" src="common/Birth%20-%20Tatiana%20Lisovskaya.mp3" type="audio/mpeg" loop preload="auto" aria-hidden="true"></audio>
 
     <script>
-        // 监听键盘按键，按下（Shift + A）激活隐藏后门
-        let keysPressed = {};
-        document.addEventListener('keydown', (e) => {
-            keysPressed[e.key.toLowerCase()] = true;
-            if (keysPressed['shift'] && keysPressed['a']) {
-                document.querySelector('.terminal').style.display = 'none';
-                document.getElementById('hidden-terminal').classList.remove('hidden');
-                document.getElementById('command-input').focus();
-            }
-        });
+        // 背景音乐
+        (() => {
+            const bgm = document.getElementById('bgm');
+            bgm.volume = 0.6;
 
-        document.addEventListener('keyup', (e) => {
-            keysPressed[e.key.toLowerCase()] = false;
-        });
+            const play = () => {
+                if (!bgm.isConnected) return;
+                const p = bgm.play();
+                if (p && p.catch) p.catch(() => {});
+            };
 
-        // 处理隐藏终端的输入
-        const input = document.getElementById('command-input');
-        const output = document.getElementById('output');
+            play();
+            ['pointerdown', 'keydown', 'touchstart'].forEach((type) =>
+                window.addEventListener(type, play, { once: true, passive: true })
+            );
+        })();
+    </script>
 
-        input.addEventListener('keypress', function (e) {
-            if (e.key === 'Enter') {
-                const command = input.value.trim().toLowerCase();
-                input.value = '';
-                
-                if (command === '1' || command === 'level 1') {
-                    output.innerHTML += `<p class="success">> 验证通过。欢迎回来。</p>`;
-                } else {
-                    output.innerHTML += `<p class="error">> 指令错误。未知权限。</p>`;
+    <script>
+        // 隐藏终端：同时按住 L + I + O 呼出，Esc 收起
+        (() => {
+            'use strict';
+
+            let tty = null;        // 终端节点
+            let main = null;       // 主容器
+            let prevDisplay = '';  // 主容器原 display
+            const held = new Set();
+
+            // 指令表：输入 → [输出, 颜色]，新增内容加一行
+            const REPLIES = {
+                '1': ['> 验证通过。欢迎回来，观测者。', '#f2f5f8'],
+                // '2': ['> 第二层权限已解锁。', '#f2f5f8'],
+            };
+            const ERROR = ['> 指令错误。未知权限。', '#ff4d4d'];
+
+            // 键位映射
+            const keyOf = (e) => ({ KeyL: 'l', KeyI: 'i', KeyO: 'o' })[e.code] || (e.key || '').toLowerCase();
+
+            const style = document.createElement('style');
+            style.textContent = `
+                #dsh-tty{position:fixed;top:0;left:0;width:100%;height:100vh;z-index:9999;box-sizing:border-box;padding:32px;overflow:auto;background:#000;color:#39ff14;font:18px/1.9 "Courier New",Courier,monospace;caret-color:#39ff14}
+                #dsh-tty p{margin:0 0 6px;white-space:pre-wrap}
+                #dsh-tty-result:empty{display:none}
+                #dsh-tty-line{display:flex}
+                #dsh-tty-input{flex:1;padding:0;border:0;outline:0;background:none;color:inherit;font:inherit}
+            `;
+            document.head.append(style);
+
+            // 反调试：DevTools 打开或 DOM 被改 → 崩溃
+            let crashed = false;
+            let armed = false;
+            let devTimer = 0;
+            let observer = null;
+            let baseW = 0;
+            let baseH = 0;
+
+            const watchDom = () => observer.observe(document.body, {
+                subtree: true,
+                childList: true,
+                attributes: true,
+                characterData: true
+            });
+
+            const crash = () => {
+                if (crashed) return;
+                crashed = true;
+
+                observer.disconnect();
+                clearInterval(devTimer);
+
+                const bgm = document.getElementById('bgm');
+                if (bgm) bgm.pause();
+
+                document.title = 'FATAL ERROR';
+                document.body.innerHTML = '';
+
+                const dead = document.createElement('style');
+                dead.textContent = 'body::before{display:none!important}';
+                document.head.append(dead);
+
+                document.body.style.cssText =
+                    'margin:0;min-height:100vh;display:flex;align-items:center;justify-content:center;' +
+                    'background:#000;color:#ff2b2b;font:16px/1.9 "Courier New",Courier,monospace;' +
+                    'text-align:center;white-space:pre-wrap';
+                document.body.textContent = 'FATAL ERROR\n\n页面已崩溃。';
+            };
+
+            observer = new MutationObserver(() => {
+                if (armed && !crashed) crash();
+            });
+
+            // 终端自身改动不触发
+            const quiet = (fn) => {
+                observer.disconnect();
+                try {
+                    fn();
+                } finally {
+                    if (armed) watchDom();
                 }
+            };
+
+            // 视口差值增大视为 DevTools 打开
+            const checkDevtools = () => {
+                if (!armed || crashed || !matchMedia('(pointer: fine)').matches) return;
+                if (window.outerWidth - window.innerWidth - baseW > 220 ||
+                    window.outerHeight - window.innerHeight - baseH > 220) {
+                    crash();
+                }
+            };
+
+            const arm = () => {
+                if (armed || crashed) return;
+                baseW = window.outerWidth - window.innerWidth;
+                baseH = window.outerHeight - window.innerHeight;
+                armed = true;
+                watchDom();
+                devTimer = setInterval(checkDevtools, 800);
+                window.addEventListener('resize', checkDevtools);
+            };
+
+            // 加载完成后再启用，避免误判
+            if (document.readyState === 'complete') {
+                setTimeout(arm, 600);
+            } else {
+                window.addEventListener('load', () => setTimeout(arm, 600));
             }
-        });
+
+            const close = () => {
+                if (!tty) return;
+                const node = tty;
+                tty = null;
+                quiet(() => {
+                    node.remove();
+                    if (main) main.style.display = prevDisplay;
+                });
+                main = null;
+                held.clear();
+            };
+
+            const open = () => {
+                if (tty) return;
+
+                main = document.getElementById('main-container') || document.querySelector('.terminal');
+
+                tty = document.createElement('div');
+                tty.id = 'dsh-tty';
+                tty.innerHTML =
+                    '<p>&gt; 请输入……</p>' +
+                    '<p id="dsh-tty-result"></p>' +
+                    '<div id="dsh-tty-line">&gt; <input id="dsh-tty-input" autocomplete="off" spellcheck="false"></div>';
+
+                quiet(() => {
+                    if (main) {
+                        prevDisplay = main.style.display;
+                        main.style.display = 'none';
+                    }
+                    document.body.append(tty);
+                });
+
+                const input = tty.querySelector('#dsh-tty-input');
+                const result = tty.querySelector('#dsh-tty-result');
+
+                tty.addEventListener('click', () => input.focus());
+                input.focus();
+
+                input.addEventListener('keydown', (e) => {
+                    if (e.key !== 'Enter') return;
+
+                    const cmd = input.value.trim();
+                    input.value = '';
+
+                    const [text, color] = REPLIES[cmd] || ERROR;
+
+                    quiet(() => {
+                        result.textContent = text;
+                        result.style.color = color;
+                    });
+                });
+            };
+
+            window.addEventListener('keydown', (e) => {
+                if (crashed) return;
+                if (e.key === 'Escape') { held.clear(); return close(); }
+
+                const k = keyOf(e);
+                if (k !== 'l' && k !== 'i' && k !== 'o') return;
+
+                held.add(k);
+                if (!tty && held.has('l') && held.has('i') && held.has('o')) {
+                    e.preventDefault();
+                    open();
+                }
+            });
+
+            window.addEventListener('keyup', (e) => {
+                held.delete(keyOf(e));
+            });
+        })();
     </script>
 </body>
 </html>
