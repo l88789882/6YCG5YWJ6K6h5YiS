@@ -8,6 +8,8 @@
     <link rel="stylesheet" href="backdrop.css">
 </head>
 <body>
+    <h1 class="hero-title">半影互动</h1>
+
     <div class="terminal">
         <div class="header">
             <span>ANTUMBRA // 独立游戏研发中</span>
@@ -22,17 +24,51 @@
             <p>我们是物理和代码的独立开发者。</p>
             <p>目前正在制作我们的第一款叙事解谜游戏：<strong>《半影》 (Antumbra)</strong>。</p>
             <p>游戏核心玩法：在常规感觉器官近乎失灵的环境下，通过其他感觉和记忆来重构周围的物理实体。</p>
-            <br>
-            <p class="devlog">> [最新开发日志]</p>
-            <p class="log-item">- 25/01/02: 制定了基本叙事框架。</p>
-            <p class="log-item">- 25/05/19: 完善了故事设定和交互逻辑。</p>
-            <p class="log-item">- 25/08/10: 完成了第一个框架原型。</p>
-            <p class="log-item">- 25/10/24: 通过一些交流完成了未来一些可行性的初步验证。</p>
-            <p class="log-item">- 26/01/04: 近期遇到困难，下个月补上进度。</p>
-            <p class="log-item">- 26/05/17: 重构游戏框架。</p>
-            <p class="log-item">- 26/07/21: 遇到困难，断更一个月。</p>
-            <p class="log-item">- 26/09/05: 加入更多设定和行为逻辑。</p>
-            <p class="log-item">- 26/10/30: 遇到困难，断更一个月。</p>
+
+            <div class="shots">
+                <img src="assets/placeholder-1.svg" alt="占位图 01" draggable="false">
+                <img src="assets/placeholder-2.svg" alt="占位图 02" draggable="false">
+            </div>
+
+            <p class="shot-note">> 示例文字：上方为两张概念图占位，可替换为游戏场景或角色截图。</p>
+            <p class="shot-note">> 下方宽幅图占位用于宣传图或 UI 展示，文案与图片均可直接修改。</p>
+
+            <div class="shots single">
+                <img src="assets/placeholder-3.svg" alt="占位图 03" draggable="false">
+            </div>
+
+            <details class="fold">
+                <summary>&gt; [关于我们]</summary>
+                <div class="fold-body">
+                    <p class="log-item">- 半影互动是一支两人独立游戏团队。</p>
+                    <p class="log-item">- 我们分别负责程序与美术，偶尔互换。</p>
+                    <p class="log-item">- 现居上海与杭州，远程协作。</p>
+                </div>
+            </details>
+
+            <details class="fold">
+                <summary>&gt; [最新开发日志]</summary>
+                <div class="fold-body">
+                    <p class="log-item">- 25/01/02: 制定了基本叙事框架。</p>
+                    <p class="log-item">- 25/05/19: 完善了故事设定和交互逻辑。</p>
+                    <p class="log-item">- 25/08/10: 完成了第一个框架原型。</p>
+                    <p class="log-item">- 25/10/24: 通过一些交流完成了未来一些可行性的初步验证。</p>
+                    <p class="log-item">- 26/01/04: 近期遇到困难，下个月补上进度。</p>
+                    <p class="log-item">- 26/05/17: 重构游戏框架。</p>
+                    <p class="log-item">- 26/07/21: 遇到困难，断更一个月。</p>
+                    <p class="log-item">- 26/09/05: 加入更多设定和行为逻辑。</p>
+                    <p class="log-item">- 26/10/30: 遇到困难，断更一个月。</p>
+                </div>
+            </details>
+
+            <details class="fold">
+                <summary>&gt; [关于我们]</summary>
+                <div class="fold-body">
+                    <p class="log-item">- 商务与合作：hello@antumbra.example</p>
+                    <p class="log-item">- 玩家交流：Bilibili 动态与评论区。</p>
+                    <p class="log-item">- 感谢每一位观测者。</p>
+                </div>
+            </details>
 
             <a class="corner-link bl" href="https://space.bilibili.com/287457026" target="_blank" rel="noopener">联系我们</a>
         </div>
@@ -41,6 +77,14 @@
             <span>© 2026 Antumbra Interactive. All realities reserved.</span>
         </div>
     </div>
+
+    <div id="clock" aria-hidden="true">
+        <span id="clock-date">21550419</span>
+        <span id="clock-time">0000</span>
+    </div>
+
+    <div id="blackhole" aria-hidden="true"></div>
+    <div id="snow" aria-hidden="true"></div>
 
     <!-- 背景音乐 -->
     <audio id="bgm" src="common/Birth%20-%20Tatiana%20Lisovskaya.mp3" type="audio/mpeg" loop preload="auto" aria-hidden="true"></audio>
@@ -61,6 +105,224 @@
             ['pointerdown', 'keydown', 'touchstart'].forEach((type) =>
                 window.addEventListener(type, play, { once: true, passive: true })
             );
+        })();
+    </script>
+
+    <script>
+        // 背景字符雨
+        (() => {
+            const glyphs = ['|', '*', '+', '·', ':', '×', '¦'];
+            const rain = document.createElement('div');
+            rain.className = 'rain';
+            for (let i = 0; i < 46; i++) {
+                const s = document.createElement('span');
+                s.textContent = glyphs[Math.floor(Math.random() * glyphs.length)];
+                s.style.left = (Math.random() * 100).toFixed(2) + '%';
+                s.style.fontSize = (8 + Math.random() * 7).toFixed(0) + 'px';
+                s.style.animationDuration = (7 + Math.random() * 11).toFixed(1) + 's';
+                s.style.animationDelay = (-Math.random() * 18).toFixed(1) + 's';
+                s.style.opacity = (0.12 + Math.random() * 0.3).toFixed(2);
+                rain.append(s);
+            }
+            document.body.prepend(rain);
+        })();
+    </script>
+
+    <script>
+        // 北京时间（日期固定为 2155-04-19）
+        (() => {
+            const el = document.getElementById('clock-time');
+            const fmt = new Intl.DateTimeFormat('en-GB', {
+                timeZone: 'Asia/Shanghai',
+                hour: '2-digit',
+                minute: '2-digit',
+                second: '2-digit',
+                hourCycle: 'h23'
+            });
+
+            const selected = () => {
+                const sel = window.getSelection();
+                if (!sel || sel.isCollapsed || !sel.rangeCount) return false;
+                const clock = document.getElementById('clock');
+                const range = sel.getRangeAt(0);
+                if (range.intersectsNode) return range.intersectsNode(clock);
+                const hit = (n) => n && (n.nodeType === 1 ? n : n.parentElement)?.closest?.('#clock');
+                return !!(hit(sel.anchorNode) || hit(sel.focusNode));
+            };
+
+            const tick = () => {
+                if (selected()) return; // 选中时冻结，避免秒数变化打断选择
+                const parts = fmt.formatToParts(new Date());
+                const get = (type) => parts.find((p) => p.type === type).value;
+                const value = get('hour') + get('minute') + get('second');
+                if (el.firstChild) el.firstChild.nodeValue = value;
+                else el.textContent = value;
+            };
+
+            tick();
+            setInterval(tick, 1000);
+
+            // 拖拽选中的文字时不触发浏览器搜索
+            document.addEventListener('dragstart', (e) => {
+                if (e.target.closest && e.target.closest('a')) return;
+                const sel = window.getSelection();
+                if (sel && !sel.isCollapsed && sel.toString().trim()) e.preventDefault();
+            });
+        })();
+    </script>
+
+    <script>
+        // 折叠内容：字符解码式展开
+        (() => {
+            const GLYPHS = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789#$%&*+-<>[]{}';
+            const DURATION = 1000;
+            const STAGGER = 90;
+            const originals = new WeakMap();
+            const runs = new WeakMap();
+
+            const stop = (el) => runs.set(el, (runs.get(el) || 0) + 1);
+
+            const scramble = (el, delay) => {
+                const text = originals.get(el) || el.textContent;
+                originals.set(el, text);
+                const chars = Array.from(text);
+                const token = (runs.get(el) || 0) + 1;
+                runs.set(el, token);
+                const start = performance.now() + delay;
+
+                const draw = (now) => {
+                    if (runs.get(el) !== token) return;
+                    if (now < start) {
+                        requestAnimationFrame(draw);
+                        return;
+                    }
+
+                    const t = Math.min(1, (now - start) / DURATION);
+                    const revealed = Math.floor(t * chars.length);
+                    let out = '';
+                    for (let i = 0; i < chars.length; i++) {
+                        out += i < revealed ? chars[i] : GLYPHS[Math.floor(Math.random() * GLYPHS.length)];
+                    }
+                    el.textContent = out;
+
+                    if (t < 1) requestAnimationFrame(draw);
+                    else el.textContent = text;
+                };
+
+                requestAnimationFrame(draw);
+            };
+
+            const prepare = (fold) => {
+                fold.querySelectorAll('.log-item').forEach((el) => {
+                    const text = originals.get(el) || el.textContent;
+                    originals.set(el, text);
+                    stop(el);
+                    el.textContent = Array.from(text, () => GLYPHS[Math.floor(Math.random() * GLYPHS.length)]).join('');
+                });
+            };
+
+            document.querySelectorAll('.fold').forEach((fold) => {
+                const summary = fold.querySelector('summary');
+
+                // 打开前先把原文换成乱码，避免原文先闪一下
+                summary.addEventListener('click', () => {
+                    if (!fold.open) prepare(fold);
+                });
+
+                summary.addEventListener('keydown', (e) => {
+                    if ((e.key === 'Enter' || e.key === ' ') && !fold.open) prepare(fold);
+                });
+
+                fold.addEventListener('toggle', () => {
+                    if (!fold.open) return;
+                    fold.querySelectorAll('.log-item').forEach((el, i) => scramble(el, i * STAGGER));
+                });
+            });
+        })();
+    </script>
+
+    <script>
+        // 黑洞透镜 + 点击雪花
+        (() => {
+            const bh = document.getElementById('blackhole');
+            const snow = document.getElementById('snow');
+            const GLYPHS = ['|', '*', '+', '·', ':', '×', '¦'];
+            let tx = window.innerWidth / 2;
+            let ty = window.innerHeight / 2;
+            let x = tx;
+            let y = ty;
+            let lastX = tx;
+            let lastY = ty;
+            let shown = false;
+            let holding = false;
+            let timer = 0;
+
+            const loop = () => {
+                const dx = tx - x;
+                const dy = ty - y;
+                if (Math.abs(dx) > 0.1 || Math.abs(dy) > 0.1) {
+                    x += dx * 0.12;
+                    y += dy * 0.12;
+                    bh.style.transform = `translate3d(${x}px, ${y}px, 0)`;
+                }
+                requestAnimationFrame(loop);
+            };
+
+            const spawn = (cx, cy, n) => {
+                for (let i = 0; i < n; i++) {
+                    const s = document.createElement('span');
+                    s.textContent = GLYPHS[Math.floor(Math.random() * GLYPHS.length)];
+                    s.style.left = cx + 'px';
+                    s.style.top = cy + 'px';
+                    s.style.fontSize = (9 + Math.random() * 8).toFixed(0) + 'px';
+                    s.style.animationDuration = (900 + Math.random() * 700).toFixed(0) + 'ms';
+                    s.style.setProperty('--dx', ((Math.random() - 0.5) * 120).toFixed(0) + 'px');
+                    s.addEventListener('animationend', () => s.remove());
+                    snow.append(s);
+                }
+            };
+
+            const stop = () => {
+                holding = false;
+                clearInterval(timer);
+            };
+
+            window.addEventListener('pointermove', (e) => {
+                tx = e.clientX;
+                ty = e.clientY;
+                lastX = tx;
+                lastY = ty;
+                if (!shown) {
+                    shown = true;
+                    x = tx;
+                    y = ty;
+                    bh.style.transform = `translate3d(${x}px, ${y}px, 0)`;
+                    bh.style.opacity = '1';
+                }
+            });
+
+            window.addEventListener('pointerdown', (e) => {
+                lastX = e.clientX;
+                lastY = e.clientY;
+                spawn(e.clientX, e.clientY, 8);
+                holding = true;
+                clearInterval(timer);
+                timer = setInterval(() => {
+                    if (holding) spawn(lastX, lastY, 2);
+                }, 70);
+            });
+
+            window.addEventListener('pointerup', stop);
+            window.addEventListener('pointercancel', stop);
+            window.addEventListener('blur', stop);
+
+            document.addEventListener('mouseleave', () => {
+                shown = false;
+                bh.style.opacity = '0';
+                stop();
+            });
+
+            requestAnimationFrame(loop);
         })();
     </script>
 
@@ -133,8 +395,22 @@
                 document.body.textContent = 'FATAL ERROR\n\n页面已崩溃。';
             };
 
-            observer = new MutationObserver(() => {
-                if (armed && !crashed) crash();
+            const inside = (target, selector) => {
+                const el = target.nodeType === 1 ? target : target.parentElement;
+                return !!el && !!el.closest(selector);
+            };
+
+            observer = new MutationObserver((records) => {
+                if (!armed || crashed) return;
+                // 折叠交互、字符动画、时钟刷新属于正常变化
+                const benign = records.every((r) =>
+                    (r.type === 'attributes' && r.attributeName === 'open' && r.target.tagName === 'DETAILS') ||
+                    inside(r.target, '.fold-body') ||
+                    inside(r.target, '#clock') ||
+                    inside(r.target, '#blackhole') ||
+                    inside(r.target, '#snow')
+                );
+                if (!benign) crash();
             });
 
             // 终端自身改动不触发
@@ -156,10 +432,32 @@
                 }
             };
 
+            const STORE = 'antumbra.viewport';
+
             const arm = () => {
                 if (armed || crashed) return;
-                baseW = window.outerWidth - window.innerWidth;
-                baseH = window.outerHeight - window.innerHeight;
+
+                const w = window.outerWidth - window.innerWidth;
+                const h = window.outerHeight - window.innerHeight;
+
+                let saved = null;
+                try { saved = JSON.parse(sessionStorage.getItem(STORE) || 'null'); } catch (e) {}
+
+                if (!saved) {
+                    try { sessionStorage.setItem(STORE, JSON.stringify({ w, h })); } catch (e) {}
+                    saved = { w, h };
+                } else if (w - saved.w > 200 || h - saved.h > 200) {
+                    // 刷新时控制台仍然开着 → 继续崩溃
+                    crash();
+                    return;
+                } else if (saved.w - w > 200 || saved.h - h > 200) {
+                    // 上次基准包含控制台，改用当前干净尺寸
+                    saved = { w, h };
+                    try { sessionStorage.setItem(STORE, JSON.stringify(saved)); } catch (e) {}
+                }
+
+                baseW = saved.w;
+                baseH = saved.h;
                 armed = true;
                 watchDom();
                 devTimer = setInterval(checkDevtools, 800);
@@ -193,7 +491,7 @@
                 tty = document.createElement('div');
                 tty.id = 'dsh-tty';
                 tty.innerHTML =
-                    '<p>&gt; 请输入……</p>' +
+                    '<p>&gt; 按ESC返回。这里请输入……</p>' +
                     '<p id="dsh-tty-result"></p>' +
                     '<div id="dsh-tty-line">&gt; <input id="dsh-tty-input" autocomplete="off" spellcheck="false"></div>';
 

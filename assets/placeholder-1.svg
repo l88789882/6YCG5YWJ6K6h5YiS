@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="640" height="360" viewBox="0 0 640 360">
+  <rect width="640" height="360" fill="#0a0c12"/>
+  <rect x="0.5" y="0.5" width="639" height="359" fill="none" stroke="#2b2f3c" stroke-dasharray="6 6"/>
+  <text x="320" y="176" fill="#6a7080" font-family="Courier New, monospace" font-size="22" letter-spacing="6" text-anchor="middle">占位图 01</text>
+  <text x="320" y="204" fill="#3f4452" font-family="Courier New, monospace" font-size="12" letter-spacing="2" text-anchor="middle">640 × 360</text>
+</svg>

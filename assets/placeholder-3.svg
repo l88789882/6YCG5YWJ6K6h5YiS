@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="420" viewBox="0 0 1200 420">
+  <rect width="1200" height="420" fill="#0a0c12"/>
+  <rect x="0.5" y="0.5" width="1199" height="419" fill="none" stroke="#2b2f3c" stroke-dasharray="6 6"/>
+  <text x="600" y="204" fill="#6a7080" font-family="Courier New, monospace" font-size="24" letter-spacing="8" text-anchor="middle">占位图 03</text>
+  <text x="600" y="236" fill="#3f4452" font-family="Courier New, monospace" font-size="12" letter-spacing="2" text-anchor="middle">1200 × 420</text>
+</svg>
