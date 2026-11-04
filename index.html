@@ -93,7 +93,8 @@
         // 背景音乐
         (() => {
             const bgm = document.getElementById('bgm');
-            bgm.volume = 0.6;
+            const VOLUME = 0.6;
+            bgm.volume = VOLUME;
 
             const play = () => {
                 if (!bgm.isConnected) return;
@@ -101,9 +102,25 @@
                 if (p && p.catch) p.catch(() => {});
             };
 
-            play();
+            // 先尝试正常播放；被自动播放策略拦截就静音起播，先把缓冲跑起来
+            const first = bgm.play();
+            if (first && first.catch) {
+                first.catch(() => {
+                    bgm.muted = true;
+                    const p = bgm.play();
+                    if (p && p.catch) p.catch(() => {});
+                });
+            }
+
+            // 首次交互解除静音，声音立即出来
+            const unmute = () => {
+                bgm.muted = false;
+                bgm.volume = VOLUME;
+                if (bgm.paused) play();
+            };
+
             ['pointerdown', 'keydown', 'touchstart'].forEach((type) =>
-                window.addEventListener(type, play, { once: true, passive: true })
+                window.addEventListener(type, unmute, { once: true, passive: true })
             );
         })();
     </script>
@@ -464,11 +481,12 @@
                 window.addEventListener('resize', checkDevtools);
             };
 
-            // 加载完成后再启用，避免误判
-            if (document.readyState === 'complete') {
-                setTimeout(arm, 600);
+            // DOM 解析完就启用，不等 load：10MB 音频会拖慢 load，
+            // 导致检测晚启动、基准被 DevTools 污染
+            if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', () => setTimeout(arm, 200));
             } else {
-                window.addEventListener('load', () => setTimeout(arm, 600));
+                setTimeout(arm, 200);
             }
 
             const close = () => {
